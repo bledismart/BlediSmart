@@ -4,13 +4,82 @@ public class Borne_Pompe {
 
     private int id_borne;
     private Type type;
+    private double puissance_kW;
     private Etat etat;
-    private int id_station;
+    private String connecteur_type;
+    private boolean disponibilite;
+    private double energie_consommee;
+    private Utilisateur dernier_utilisateur;
+    private Station station;
+    private tarifs tarif;
+    private double cout;
+
+    public double getCout() {
+        return cout;
+    }
+
+    public void setCout(double cout) {
+        this.cout = cout;
+    }
+
+    public double getPuissance_kW() {
+        return puissance_kW;
+    }
+
+    public void setPuissance_kW(double puissanceKW) {
+        this.puissance_kW = puissanceKW;
+    }
+
+    public String getConnecteur_type() {
+        return connecteur_type;
+    }
+
+    public void setConnecteur_type(String connecteurType) {
+        this.connecteur_type = connecteurType;
+    }
+
+    public boolean isDisponible() {
+        return disponibilite;
+    }
+
+    public void setDisponibilile(boolean disponible) {
+        this.disponibilite = disponible;
+    }
+
+    public double getEnergie_consommee() {
+        return energie_consommee;
+    }
+
+    public void setEnergie_consommee(double energie_consommee) {
+        this.energie_consommee = energie_consommee;
+        calculerCout();
+    }
+
+    public Station getStation() {
+        return station;
+    }
+    public void setStation(Station station) {
+        this.station = station;
+    }
+    public void setDernier_utilisateur(Utilisateur user) {
+        this.dernier_utilisateur = user;
+    }
+    public Utilisateur getDernier_utilisateur() {
+        return dernier_utilisateur;
+    }
+    public tarifs getTarif() {
+        return tarif;
+    }
+    public void setTarif(tarifs tarif) {
+        this.tarif = tarif;
+        calculerCout();
+    }
 
     // Enum pour Type
     public enum Type {
-        BORNE("borne"),
-        POMPE("pompe");
+        STAN("standard"),
+        FAST("rapide"),
+        UFAST("ulta-rapide");
 
         private final String value;
 
@@ -34,8 +103,8 @@ public class Borne_Pompe {
 
     // Enum pour Etat
     public enum Etat {
-        DISPO("disponible"),
-        NON_DISPO("indisponible");
+        ACTV("active"),
+        NO_ACTV("hors service");
 
         private final String value;
 
@@ -60,18 +129,33 @@ public class Borne_Pompe {
     // Constructeurs
     public Borne_Pompe() {
     }
-    public Borne_Pompe( Type type, Etat etat,int id_station) {
+    public Borne_Pompe( Type type,double puissance_kW, Etat etat,String connecteur_type,boolean disponibilite,double energie_consommee,
+                        Utilisateur user,Station station,tarifs tarif ,double cout) {
         this.type = type;
+        this.cout=cout;
         this.etat = etat;
-        this.id_station = id_station;
+        this.puissance_kW = puissance_kW;
+        this.connecteur_type = connecteur_type;
+        this.disponibilite = disponibilite;
+        this.energie_consommee = energie_consommee;
+        this.dernier_utilisateur = user;
+        this.station = station;
+        this.tarif = tarif;
 
     }
-    public Borne_Pompe(Type type, Etat etat,int id_station,int id_borne) {
-
-        this.type = type;
-        this.etat = etat;
-        this.id_station = id_station;
+    public Borne_Pompe(Type type,double puissance_kW, Etat etat,String connecteur_type,boolean disponibilite,double energie_consommee,
+                       Utilisateur user,Station station,tarifs tarif ,double cout, int id_borne) {
         this.id_borne = id_borne;
+        this.type = type;
+        this.cout=cout;
+        this.etat = etat;
+        this.puissance_kW = puissance_kW;
+        this.connecteur_type = connecteur_type;
+        this.disponibilite = disponibilite;
+        this.energie_consommee = energie_consommee;
+        this.dernier_utilisateur = user;
+        this.station = station;
+        this.tarif = tarif;
 
 
     }
@@ -85,14 +169,15 @@ public class Borne_Pompe {
         this.id_borne = id_borne;
     }
 
-    public int getId_station() {
-        return id_station;
+
+    public Utilisateur getUser() {
+
+        return dernier_utilisateur;
     }
 
-    public void setId_station(int id_station) {
-        this.id_station = id_station;
+    public void setUser(Utilisateur user) {
+        this.dernier_utilisateur = user;
     }
-
     public Type getType() {
         return type;
     }
@@ -120,8 +205,17 @@ public class Borne_Pompe {
                 "id_borne=" + id_borne +
                 ", type=" + type.getValue() +
                 ", etat=" + etat.getValue() +
-                "id_station=" + id_station +
+                "station=" + station +
+                ", tarif=" + (tarif != null ? tarif.toString() : "null") +
 
                 '}';
     }
+    public void calculerCout() {
+        if (tarif != null) {
+            this.cout = this.energie_consommee * this.tarif.getTarif_par_kwh();
+        } else {
+            this.cout = 0; // Valeur par défaut si aucun tarif n'est défini
+        }
+    }
+
 }

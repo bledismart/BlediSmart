@@ -3,6 +3,7 @@ package tn.esprit.services;
 import tn.esprit.interfaces.IService;
 
 import tn.esprit.models.Station;
+import tn.esprit.models.Utilisateur;
 import tn.esprit.utils.MyDatabase;
 
 import java.sql.*;
@@ -22,14 +23,19 @@ public class ServiceStation implements IService<Station>
     public void add(Station station) {
         //create Qry SQL
         //execute Qry
-        String qry ="INSERT INTO `stations`(`nom_station`, `emplacement`, `status`,`id_user`) VALUES (?,?,?,?)";
+        String qry ="INSERT INTO `stations`(`nom_station`, `emplacement`, `status` ,`Capacite_max` , `id_user`,`heures_ouverture` ,`contact` ,`latitude` ,`longitude`) VALUES (?,?,?,?,?,?,?,?,?)";
         try {
             PreparedStatement pstm = cnx.prepareStatement(qry);
             pstm.setString(1,station.getNom_station());
             pstm.setString(2, station.getEmplacement());
             pstm.setString(3,station.getStatus().getValue());
-            pstm.setInt(4, station.getId_user());
 
+            pstm.setInt(4, station.getCapaciteMax());
+            pstm.setInt(5, station.getUser().getId_user());
+            pstm.setString(6, station.getHeuresOuverture());
+            pstm.setString(7, station.getContact());
+            pstm.setDouble(8,station.getLatitude());
+            pstm.setDouble(9,station.getLongitude());
 
             pstm.executeUpdate();
         } catch (SQLException e) {
@@ -59,7 +65,15 @@ public class ServiceStation implements IService<Station>
                 p.setNom_station(rs.getString(2));
                 p.setEmplacement(rs.getString("emplacement"));
                 p.setStatus(rs.getString("status"));
-                p.setId_station(rs.getInt("id_user"));
+                p.setCapaciteMax(rs.getInt("capacite_max"));
+
+                Utilisateur u = new Utilisateur();
+                u.setId_user(rs.getInt("id_user"));
+                p.setUser(u);
+                p.setHeuresOuverture(rs.getString("heures_ouverture"));
+                p.setContact(rs.getString("contact"));
+                p.setLatitude(rs.getDouble("latitude"));
+                p.setLongitude(rs.getDouble("longitude"));
                 stations.add(p);
             }
 
@@ -75,14 +89,20 @@ public class ServiceStation implements IService<Station>
     @Override
     public void update(Station station) {
 
-        String qry ="UPDATE `stations` SET `nom_station`=?, `emplacement`=?, `status`=? , `id_user`=? WHERE `id_station`=?";
+        String qry ="UPDATE `stations` SET `nom_station`=?, `emplacement`=?, `status`=? ,`Capacite_max`=? , `id_user`=?,`heures_ouverture`=? ,`contact`=? ,`latitude`=? ,`longitude`=?  WHERE `id_station`=?";
         try {
             PreparedStatement pstm = cnx.prepareStatement(qry);
             pstm.setString(1,station.getNom_station());
             pstm.setString(2, station.getEmplacement());
             pstm.setString(3,station.getStatus().getValue());
-            pstm.setInt(4,station.getId_user());
-            pstm.setInt(5,station.getId_station());
+            pstm.setInt(4, station.getCapaciteMax());
+            pstm.setInt(5, station.getUser().getId_user());
+            pstm.setString(6, station.getHeuresOuverture());
+            pstm.setString(7, station.getContact());
+            pstm.setDouble(8,station.getLatitude());
+            pstm.setDouble(9,station.getLongitude());
+
+            pstm.setInt(10,station.getId_station());
 
 
 
